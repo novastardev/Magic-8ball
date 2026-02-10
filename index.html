@@ -123,29 +123,14 @@ footer .links button{ background:transparent; color:var(--primary); border:none;
       <button onclick="openDialog('terms')">Terms</button>
     </div>
   </footer>
+ <div id="dialogOverlay" class="dialog-overlay">
+    <div class="dialog-card">
+      <button class="dialog-close" onclick="closeDialog()">✕</button>
+      <h2 id="dialogTitle"></h2>
+      <div id="dialogContent"></div>
+    </div>
+  </div>
 
-          <p style="color:var(--muted)">If you have feedback or questions, reach out:</p>
-          <div style="margin-top:8px">
-            <strong>Email:</strong> <a href="mailto:novastardev1@gmail.com" style="color:var(--primary) ;text-decoration:none;">novastardev1@gmail.com</a>
-          </div>
-          <form style="margin-top:12px" onsubmit="event.preventDefault(); alert('Thanks — message simulated (no backend)'); closeDialog();">
-            <div class="form-row">
-              <label class="sr-only">Name</label>
-              <input type="text" placeholder="Your name" required>
-            </div>
-            <div class="form-row">
-              <label class="sr-only">Email</label>
-              <input type="email" placeholder="Your email" required>
-            </div>
-            <div class="form-row">
-              <label class="sr-only">Message</label>
-              <textarea placeholder="Message" required></textarea>
-            </div>
-            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-              <button type="submit" class="btn">Send</button>
-              <button type="button" class="btn btn-outline" onclick="closeDialog()">Cancel</button>
-            </div>
-  </form>
   <audio id="shakeSound" src="shake.mp3" preload="auto"></audio>
 
   <script>
