@@ -124,24 +124,211 @@ footer .links button{ background:transparent; color:var(--primary); border:none;
     </div>
   </footer>
 
-  <div id="dialogOverlay" class="dialog-overlay">
-    <div class="dialog-card">
-      <button class="dialog-close" onclick="closeDialog()">✕</button>
-      <h2 id="dialogTitle"></h2>
-      <div id="dialogContent"></div>
-    </div>
-  </div>
-
+          <p style="color:var(--muted)">If you have feedback or questions, reach out:</p>
+          <div style="margin-top:8px">
+            <strong>Email:</strong> <a href="mailto:novastardev1@gmail.com" style="color:var(--primary) ;text-decoration:none;">novastardev1@gmail.com</a>
+          </div>
+          <form style="margin-top:12px" onsubmit="event.preventDefault(); alert('Thanks — message simulated (no backend)'); closeDialog();">
+            <div class="form-row">
+              <label class="sr-only">Name</label>
+              <input type="text" placeholder="Your name" required>
+            </div>
+            <div class="form-row">
+              <label class="sr-only">Email</label>
+              <input type="email" placeholder="Your email" required>
+            </div>
+            <div class="form-row">
+              <label class="sr-only">Message</label>
+              <textarea placeholder="Message" required></textarea>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+              <button type="submit" class="btn">Send</button>
+              <button type="button" class="btn btn-outline" onclick="closeDialog()">Cancel</button>
+            </div>
+  </form>
   <audio id="shakeSound" src="shake.mp3" preload="auto"></audio>
 
   <script>
 const responses=[
-  "The stars align in your favor ✨","Yes — patience will reward you ⏳","The outcome looks promising 🌟",
-  "Absolutely, without a doubt ✅","This path leads to success 🛤️","Luck is quietly on your side 🍀",
-  "The signs point to yes 👉","Go for it — now is the moment 🚀","A pleasant surprise awaits 🎁",
-  "Confidence will bring a yes 💪","The future is uncertain for now 🌫️","Ask again when timing improves 🔄",
-  "No — this will not work ❌","The answer is clearly no 🚫","This choice leads to trouble ⚠️"
-];
+  // Positive / Yes answers
+  "The stars align in your favor ✨",
+  "Yes — patience will reward you ⏳",
+  "The outcome looks promising 🌟",
+  "Absolutely, without a doubt ✅",
+  "This path leads to success 🛤️",
+  "Luck is quietly on your side 🍀",
+  "The signs point to yes 👉",
+  "Go for it — now is the moment 🚀",
+  "A pleasant surprise awaits 🎁",
+  "Confidence will bring a yes 💪",
+
+  "A bold move brings progress 🦅",
+  "Small steps lead forward 👣",
+  "Expect the unexpected 🎭",
+  "Trust the process 🔒",
+  "A delay works in your favor 🧱",
+  "This choice brings balance ⚖️",
+  "Fortune favors patience 🐢",
+  "Momentum is building 📈",
+  "Let intuition guide you 🧭",
+  "Something better is coming 🌅",
+
+  "This decision brings peace ☮️",
+  "Uncertainty fades with action 🧗",
+  "The answer improves with time 🧪",
+  "New opportunities will appear 🚪",
+  "A calm approach is best 🧘",
+  "Growth follows persistence 🌱",
+  "Change is approaching 🔔",
+  "The situation is fragile 🧊",
+  "Wisdom suggests waiting 📜",
+  "Proceed with caution 🚦",
+
+  "Confidence unlocks success 🔑",
+  "This path brings learning 📘",
+  "A surprise alters everything 🎲",
+  "Focus on what matters 🎯",
+  "Patience strengthens results 🪨",
+  "The answer favors balance 🪷",
+  "Slow progress is still progress 🐌",
+  "Reconsider your priorities 📌",
+  "This choice shapes the future 🧱",
+  "Trust time to decide ⏳",
+
+  "Hope shines quietly 🌠",
+  "The moment is approaching ⏰",
+  "A shift in thinking helps 🧠",
+  "Let go of doubt 🎈",
+  "Stability comes first 🧱",
+  "The answer lies within you 💭",
+  "Reflection brings clarity 🪞",
+  "Something unseen influences this 👤",
+  "The outcome improves with care 🩹",
+  "Balance brings the best result ⚖️",
+
+  // Neutral / Uncertain answers
+  "The future is uncertain for now 🌫️",
+  "Ask again when timing improves 🔄",
+  "It could go either way ⚖️",
+  "The answer is hidden for now 🔮",
+  "Focus carefully before deciding 🧠",
+  "The vision is not yet clear 👁️",
+  "Results depend on your actions ♟️",
+  "Not now, but soon ⌛",
+  "Give it more thought 🤔",
+  "Timing will decide this 🕰️",
+
+  "Magic says try again later 🔁",
+  "The universe is undecided 🌌",
+  "Silence suggests reflection 🤫",
+  "Your choice will change things 🔀",
+  "Hesitation clouds the answer 🌀",
+  "Clarity will arrive soon 💡",
+  "The result depends on you 🎯",
+  "Energy is shifting — wait 🌊",
+  "The truth is forming 🧩",
+  "Time will reveal all 🕯️",
+
+  // Negative / No answers
+  "No — this is not the right choice ❌",
+  "The odds are not in your favor 📉",
+  "It’s best to avoid this 🚫",
+  "The answer leans toward no ⬇️",
+  "This may disappoint you 😕",
+  "The signs warn against it ⚠️",
+  "Better options lie elsewhere 🌍",
+  "Trust your instincts — no 🛑",
+  "The result would not be ideal 🌧️",
+  "Now is not the time ⏱️",
+
+  "No — this will not work ❌",
+  "The answer is clearly no 🚫",
+  "This choice leads to trouble ⚠️",
+  "The odds are against you 📉",
+  "It’s best to avoid this 🛑",
+  "This path brings disappointment 😕",
+  "Now is a bad time ⏱️",
+  "The outcome looks unfavorable 🌧️",
+  "Do not proceed further ⛔",
+  "The signs point to no 👎",
+
+  "This decision may backfire 🔥",
+  "The result would be negative 📛",
+  "It’s unlikely to succeed 🚷",
+  "This is not advised 🧱",
+  "The situation works against you 🧲",
+  "Expect obstacles ahead 🪨",
+  "The future looks dim 🌑",
+  "This choice creates regret 😞",
+  "The answer leans no ⬇️",
+  "Better not take this risk 🎯",
+
+  "Failure is likely here 💥",
+  "The timing is wrong 🕰️",
+  "This move causes setbacks 🧯",
+  "The path is blocked 🚧",
+  "Not a wise decision 📵",
+  "The result will disappoint 🎭",
+  "This choice drains energy 🪫",
+  "The signs warn strongly ⚡",
+  "You may lose more than gain ⚖️",
+  "This brings unnecessary stress 😣",
+
+  "The outlook is poor ☁️",
+  "The answer remains no ❎",
+  "This leads to conflict 🧨",
+  "The direction is unsafe 🧭",
+  "Avoid making this move 🛑",
+  "The result would be harmful 🧪",
+  "This ends badly 🪦",
+  "The situation deteriorates 📉",
+  "Expect resistance 🧱",
+  "The decision lacks support 👤",
+
+  "This choice causes delay 🐌",
+  "The outcome is unfavorable 🌪️",
+  "Progress will be blocked 🚪",
+  "This creates complications 🧩",
+  "The answer is negative 🧯",
+  "This brings frustration 😤",
+  "The risk outweighs reward ⚖️",
+  "The path is unstable 🧊",
+  "This move lacks clarity 🌫️",
+  "The result will not satisfy 😐",
+
+  "The odds continue to drop 📉",
+  "This choice weakens your position 🧱",
+  "A setback is likely 🧲",
+  "This is a losing move 🎲",
+  "The situation worsens 📛",
+  "This causes imbalance ⚖️",
+  "The outcome is bleak 🌑",
+  "This will not end well 🪫",
+  "Expect disappointment ahead 😔",
+  "The direction is flawed 🧭",
+
+  "This move invites problems 🧨",
+  "The answer stays no 🛑",
+  "The path collapses 🚧",
+  "This creates loss 📉",
+  "The timing ruins it ⏳",
+  "This choice breaks momentum 🪨",
+  "The situation becomes tense 😬",
+  "The result causes regret 🧾",
+  "This option is rejected ❌",
+  "The signs remain negative ⚠️",
+
+  "This path offers no reward 🪙",
+  "The outcome declines 📉",
+  "This brings failure closer 🧯",
+  "The direction should be abandoned 🚷",
+  "This decision weakens progress 🧱",
+  "The result lacks success 🏳️",
+  "This option closes doors 🚪",
+  "The answer is firmly no 🚫",
+  "The future worsens from here 🌧️",
+  "This choice should be avoided entirely ⛔"
+  ];
 
 const ballEl = document.getElementById('ball');
 const shakeBtn = document.getElementById('shakeBtn');
