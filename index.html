@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magic 8-Ball — Novastar.dev</title>
+<style>
+:root {
+  --bg-grad-1: #1f1c2c;
+  --bg-grad-2: #928DAB;
+  --primary: #00f2ff;
+  --primary-contrast: #000;
+  --card-bg: rgba(17,17,17,0.85);
+  --text: #fff;
+  --muted: rgba(255,255,255,0.7);
+  --elev-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  --radius: 12px;
+}
+body.light-theme {
+  --bg-grad-1: #f5f7fb;
+  --bg-grad-2: #dfe8f8;
+  --primary: #1a73e8;
+  --primary-contrast: #fff;
+  --card-bg: rgba(255,255,255,0.95);
+  --text: #111827;
+  --muted: rgba(17,24,39,0.6);
+}
+body.theme-valentine {
+  --bg-grad-1: #ff5f9e;
+  --bg-grad-2: #ffc3d9;
+  --primary: #ff2e88;
+  --primary-contrast: #fff;
+  --card-bg: rgba(255,240,246,0.95);
+  --text: #3a0f25;
+}
+body.theme-halloween {
+  --bg-grad-1: #1b1b1b;
+  --bg-grad-2: #ff6a00;
+  --primary: #ff8c00;
+  --primary-contrast: #000;
+  --card-bg: rgba(20,20,20,0.95);
+  --text: #fff5e6;
+}
+body.theme-winter {
+  --bg-grad-1: #cce7ff;
+  --bg-grad-2: #99d3ff;
+  --primary: #0066cc;
+  --primary-contrast: #fff;
+  --card-bg: rgba(240,248,255,0.95);
+  --text: #003366;
+}
+
+html,body{height:100%;margin:0;}
+body {
+  font-family: Inter, system-ui, sans-serif;
+  display:flex; align-items:center; justify-content:center;
+  padding:28px; box-sizing:border-box;
+  transition: background .35s ease, color .35s ease;
+  flex-direction:column;
+  background: linear-gradient(135deg,var(--bg-grad-1),var(--bg-grad-2));
+}
+.app-shell { width:100%; max-width:720px; text-align:center; padding:28px; box-sizing:border-box; }
+h1 { margin:8px 0; font-size:1.9rem; }
+p.lead { margin:0 0 16px; color:var(--muted); }
+.ball {
+  width:220px; height:220px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  margin:18px auto; padding:18px;
+  background: radial-gradient(circle at 28% 25%, rgba(255,255,255,0.02), rgba(0,0,0,0.7)),
+              linear-gradient(180deg,#0b0b0b,#131318);
+  box-shadow:0 12px 36px rgba(0,0,0,0.6), inset 0 6px 20px rgba(255,255,255,0.02);
+  color: var(--primary);
+  font-size:1.05rem; text-align:center;
+  transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .2s ease;
+}
+.ball.shake { animation: shake 420ms cubic-bezier(.36,.07,.19,.97); }
+@keyframes shake {
+  0%{ transform: rotate(0); }
+  25%{ transform: rotate(8deg); }
+  50%{ transform: rotate(-8deg); }
+  75%{ transform: rotate(6deg); }
+  100%{ transform: rotate(0); }
+}
+.btn { padding:10px 16px; border-radius:10px; font-weight:600; cursor:pointer;
+       color: var(--primary-contrast); background: var(--primary); border:none;
+       box-shadow: 0 6px 18px rgba(0,0,0,0.25); transition: transform .12s ease;}
+.btn:active{ transform: translateY(1px) scale(.997);}
+.btn-outline{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.08);}
+footer{ position: fixed; bottom:14px; width:100%; display:flex; justify-content:center; }
+footer .links{ display:flex; gap:12px; }
+footer .links button{ background:transparent; color:var(--primary); border:none; font-weight:600; cursor:pointer; padding:6px 10px; border-radius:8px;}
+.ball.magic-glow{ box-shadow: 0 0 24px var(--primary), 0 0 48px var(--primary-contrast), 0 0 72px var(--primary);}
+.topbar { position:absolute; top:18px; right:20px; }
+.theme-toggle { cursor:pointer; padding:8px 10px; border-radius:10px; background: rgba(255,255,255,0.05); }
+.dialog-overlay { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background: rgba(4,6,10,0.55); z-index:9999; padding:24px; box-sizing:border-box; }
+.dialog-overlay.show { display:flex; }
+.dialog-card { width:100%; max-width:640px; max-height:85vh; overflow:auto; background: var(--card-bg); border-radius:14px; padding:18px; box-shadow:var(--elev-shadow); color:var(--text); position:relative; }
+.dialog-close { position:absolute; top:12px; right:12px; background:transparent; border:none; color:var(--muted); font-size:1.25rem; cursor:pointer; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="theme-toggle" id="themeToggle">🌙</div>
+  </div>
+
+  <main class="app-shell">
+    <div class="container">
+      <h1>🔮 Magic 8-Ball</h1>
+      <p class="lead">Ask your question, then tap <strong>Shake</strong></p>
+      <div class="ball" id="ball" aria-live="polite">Ask me anything...</div>
+      <div class="controls">
+        <button class="btn" id="shakeBtn">🎱 Shake</button>
+        <button class="btn btn-outline" id="randomizeBtn">Surprise me</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="links">
+      <button onclick="openDialog('about')">About</button>
+      <button onclick="openDialog('contact')">Contact</button>
+      <button onclick="openDialog('privacy')">Privacy</button>
+      <button onclick="openDialog('terms')">Terms</button>
+    </div>
+  </footer>
+
+  <div id="dialogOverlay" class="dialog-overlay">
+    <div class="dialog-card">
+      <button class="dialog-close" onclick="closeDialog()">✕</button>
+      <h2 id="dialogTitle"></h2>
+      <div id="dialogContent"></div>
+    </div>
+  </div>
+
+  <audio id="shakeSound" src="shake.mp3" preload="auto"></audio>
+
+  <script>
+const responses=[
+  "The stars align in your favor ✨","Yes — patience will reward you ⏳","The outcome looks promising 🌟",
+  "Absolutely, without a doubt ✅","This path leads to success 🛤️","Luck is quietly on your side 🍀",
+  "The signs point to yes 👉","Go for it — now is the moment 🚀","A pleasant surprise awaits 🎁",
+  "Confidence will bring a yes 💪","The future is uncertain for now 🌫️","Ask again when timing improves 🔄",
+  "No — this will not work ❌","The answer is clearly no 🚫","This choice leads to trouble ⚠️"
+];
+
+const ballEl = document.getElementById('ball');
+const shakeBtn = document.getElementById('shakeBtn');
+const randomizeBtn = document.getElementById('randomizeBtn');
+const themeToggle = document.getElementById('themeToggle');
+const shakeSound = document.getElementById('shakeSound');
+
+function typeWriter(text, el, delay=28){
+  el.textContent="";
+  let i=0;
+  function typing(){ if(i<text.length){ el.textContent+=text.charAt(i); i++; setTimeout(typing,delay);}}
+  typing();
+}
+
+function getRandom(){ return responses[Math.floor(Math.random()*responses.length)]; }
+
+function shakeBall(){
+  shakeBtn.disabled=true;
+  ballEl.classList.remove('shake','magic-glow');
+  void ballEl.offsetWidth;
+  ballEl.classList.add('shake','magic-glow');
+  shakeSound.currentTime=0; shakeSound.play().catch(()=>{});
+  if(navigator.vibrate){ navigator.vibrate(120); }
+  setTimeout(()=>{ typeWriter(getRandom(),ballEl); setTimeout(()=>{ ballEl.classList.remove('magic-glow'); shakeBtn.disabled=false; },520); },180);
+}
+
+function surprise(){ typeWriter(getRandom(),ballEl,10); }
+
+shakeBtn.addEventListener('click',shakeBall);
+randomizeBtn.addEventListener('click',surprise);
+
+const themes=["default","light","valentine","halloween","winter"];
+function applyTheme(theme){
+  document.body.classList.remove("light-theme","theme-valentine","theme-halloween","theme-winter");
+  if(theme==="light") document.body.classList.add("light-theme");
+  if(theme==="valentine") document.body.classList.add("theme-valentine");
+  if(theme==="halloween") document.body.classList.add("theme-halloween");
+  if(theme==="winter") document.body.classList.add("theme-winter");
+  try{ localStorage.setItem("novastar_theme",theme);}catch(e){}
+  const icons={default:"🌙",light:"☀️",valentine:"💖",halloween:"🎃",winter:"❄️"};
+  themeToggle.textContent=icons[theme]||"🎨";
+}
+themeToggle.addEventListener("click",()=>{
+  const current=localStorage.getItem("novastar_theme")||"default";
+  const next=themes[(themes.indexOf(current)+1)%themes.length];
+  applyTheme(next);
+});
+applyTheme(localStorage.getItem("novastar_theme")||"default");
+
+const overlay=document.getElementById('dialogOverlay');
+const dialogTitle=document.getElementById('dialogTitle');
+const dialogContent=document.getElementById('dialogContent');
+function openDialog(type){
+  overlay.classList.add('show');
+  dialogTitle.textContent=type.charAt(0).toUpperCase()+type.slice(1);
+  dialogContent.innerHTML=`<p>Content for ${type}</p>`;
+}
+function closeDialog(){ overlay.classList.remove('show'); }
+  </script>
+</body>
+</html>
